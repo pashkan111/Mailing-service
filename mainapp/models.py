@@ -15,6 +15,7 @@ class Client(models.Model):
     
     phone = models.CharField(max_length=12)
     code = models.CharField(max_length=5)
+    tag = models.CharField(max_length=255, null=True)
     timezone = models.CharField(max_length=50)
 
 
