@@ -9,6 +9,8 @@ urlpatterns = [
     ),
     path("mailings", views.MailingViewSet.as_view({"get": "list", "post": "create"})),
     path("mailings/<int:pk>",
-        views.MailingViewSet.as_view({"patch": "update", "delete": "destroy"})
+        views.MailingViewSet.as_view(
+            {"patch": "update", "delete": "destroy", 'get': 'retrieve'}
+            )
     ),
 ]

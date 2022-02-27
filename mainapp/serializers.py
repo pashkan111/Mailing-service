@@ -24,8 +24,6 @@ class MessageSerializer(serializers.ModelSerializer):
         
         
 class MailingSerializer(serializers.ModelSerializer):
-    mailings_messages = MessageSerializer(many=True)
-    
     class Meta:
         model = models.Mailing
         fields = (
@@ -34,6 +32,16 @@ class MailingSerializer(serializers.ModelSerializer):
             'date_finish',
             'text',
             'filter',
-            'mailings_messages'
         )
         read_only_fields = ('id',)
+
+            
+class MailingStisticSerializer(MailingSerializer):
+    mailings_messages = MessageSerializer(many=True)
+    
+    class Meta:
+        model = models.Mailing
+        fields = (
+            'id',
+            'mailings_messages',
+        )
