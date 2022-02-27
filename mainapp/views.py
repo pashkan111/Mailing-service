@@ -10,3 +10,10 @@ class ClientViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, partial=True, **kwargs)
     
+    
+class MailingViewSet(ModelViewSet):
+    serializer_class = serializers.MailingSerializer
+    queryset = models.Mailing.objects.all()
+    
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, partial=True, **kwargs)

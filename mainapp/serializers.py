@@ -11,3 +11,15 @@ class ClientSerializer(serializers.ModelSerializer):
             'tag',
             'timezone'
             )
+        
+        
+class MailingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Mailing
+        fields = (
+            'date_start',
+            'date_finish',
+            'text',
+            'filter'
+        )
+    
