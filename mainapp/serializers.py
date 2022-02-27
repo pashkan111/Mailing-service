@@ -13,7 +13,19 @@ class ClientSerializer(serializers.ModelSerializer):
             )
         
         
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Message
+        fields = (
+            'date',
+            'status',
+            'client_to'
+        )
+        
+        
 class MailingSerializer(serializers.ModelSerializer):
+    mailings_messages = MessageSerializer(many=True)
+    
     class Meta:
         model = models.Mailing
         fields = (
@@ -21,7 +33,7 @@ class MailingSerializer(serializers.ModelSerializer):
             'date_start',
             'date_finish',
             'text',
-            'filter'
+            'filter',
+            'mailings_messages'
         )
         read_only_fields = ('id',)
-    

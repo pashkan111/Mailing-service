@@ -31,11 +31,14 @@ class Message(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20)
     mailing = models.ForeignKey(
-        Mailing, on_delete=models.SET_NULL, null=True
+        Mailing, 
+        on_delete=models.SET_NULL, 
+        null=True,
+        related_name='mailings_messages'
         )
     client_to = models.ForeignKey(
-        Client, on_delete=models.SET_NULL, null=True
+        Client, 
+        on_delete=models.SET_NULL, 
+        null=True,
+        related_name='clients_messages'
         )
-    
-    def __str__(self) -> str:
-        return self.id
