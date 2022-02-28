@@ -28,8 +28,20 @@ class Client(models.Model):
 class Message(models.Model):
     """Сообщение"""
     
+    IN_PROGRESS = 'progress'
+    DELIVERED = 'delivered'
+    
+    STATUS_CHOISES = (
+        ('IN_PROGRESS', IN_PROGRESS),
+        ('DELIVERED', DELIVERED)
+    )
+    
     date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20)
+    status = models.CharField(
+        max_length=20, 
+        choices=STATUS_CHOISES,
+        default=IN_PROGRESS
+        )
     mailing = models.ForeignKey(
         Mailing, 
         on_delete=models.SET_NULL, 
