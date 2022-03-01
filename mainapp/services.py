@@ -34,9 +34,7 @@ class ServiceClient:
         response = requests.post(
             url=self.url, 
             data=data,
-            headers={
-                'Authorization': self.token
-            }
+            headers={'Authorization': self.token}
         )
         try:
             response.raise_for_status()

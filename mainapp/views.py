@@ -4,7 +4,7 @@ from . import serializers
 from . import models
 from .mixins import SerializerMixin
 from .services import get_statistic
-
+from service.settings import env
 
 class ClientViewSet(ModelViewSet):
     serializer_class = serializers.ClientSerializer
@@ -27,5 +27,7 @@ class MailingViewSet(SerializerMixin, ModelViewSet):
     
 class StatisticView(views.APIView):
     def get(self, request, *args, **kwargs):
+
+        print(env('SERVICE_URL'))
         messages = get_statistic()
         return response.Response(messages)
