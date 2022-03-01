@@ -2,7 +2,7 @@ from . import models
 from django.db.models import Count
 
 
-def get_statistic():
+def get_statistic() -> dict:
     """
     Get count of messages for each mailing grouped by status
     """

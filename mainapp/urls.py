@@ -13,4 +13,5 @@ urlpatterns = [
             {"patch": "update", "delete": "destroy", 'get': 'retrieve'}
             )
     ),
+    path('message-statistic', views.StatisticView.as_view()),
 ]
