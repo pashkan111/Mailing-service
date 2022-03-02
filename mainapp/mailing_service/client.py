@@ -1,4 +1,5 @@
 import os, requests
+from typing import List
 
 
 class ServiceClient:
@@ -7,42 +8,42 @@ class ServiceClient:
         which can send message to phone number
     """
     
-    def __init__(self):
+    def __init__(self, data: List[dict]):
         service_url = os.environ.get('SERVICE_URL')
         service_token = os.environ.get('SERVICE_TOKEN')
-        data = data.get('id')
-        if service_url and service_token and message_id:
-            self.url = f'{service_url}/{message_id}'
+        if service_url and service_token:
+            self.url = service_url
             self.token = service_token
             self.data = data
         else:
             # add logging
             raise Exception
-    
-    def _get_data(self):
+        
+    def _get_url(self, obj: dict) -> str:
         try:
-            phone = self.data['phone']
-            text = self.data['text']
-            self.data = {
-                "id": id,
-                "text": text,
-                "phone": phone
-            }
+            id = obj['id']
+            return f'{self.url}/{id}'
         except KeyError as e:
             # add logging
-            raise Exception
+            print(str(e))
     
     def send_data(self) -> bool:
-        response = requests.post(
-            url=self.url, 
-            data=self.data,
-            headers={'Authorization': self.token}
-        )
-        try:
-            response.raise_for_status()
-            return True
-        except Exception as e:
-            # add logging
-            print(str(e))
-            return False
+        """
+        Iterates by list of data objects and send data
+        to service
+        """
+        for obj in self.data:
+            url = self._get_url(obj)
+            response = requests.post(
+                url=url,
+                data=obj,
+                headers={'Authorization': self.token}
+            )
+            try:
+                response.raise_for_status()
+                return True
+            except Exception as e:
+                # add logging
+                print(str(e))
+                return False
         
