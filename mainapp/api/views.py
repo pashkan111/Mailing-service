@@ -1,9 +1,9 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import views, response
 from . import serializers
-from . import models
+from .. import models
 from .mixins import SerializerMixin
-from .services import get_statistic
+from ..services import get_statistic
 from service.settings import env
 
 class ClientViewSet(ModelViewSet):
