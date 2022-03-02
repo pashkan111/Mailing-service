@@ -16,7 +16,7 @@ class ServiceClient:
             self.token = service_token
             self.data = data
         else:
-            # add logging
+            # TODO add logging
             raise Exception
         
     def _get_url(self, obj: dict) -> str:
@@ -24,7 +24,7 @@ class ServiceClient:
             id = obj['id']
             return f'{self.url}/{id}'
         except KeyError as e:
-            # add logging
+            # TODO add logging
             print(str(e))
     
     def send_data(self) -> bool:
@@ -43,7 +43,7 @@ class ServiceClient:
                 response.raise_for_status()
                 return True
             except Exception as e:
-                # add logging
+                # TODO add logging
                 print(str(e))
                 return False
         

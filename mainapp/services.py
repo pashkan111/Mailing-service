@@ -21,6 +21,28 @@ def get_phones_for_mailing(tag: str) -> List[Dict]:
     return list(phones)
 
 
+def get_text_message(id: int) -> dict:
+    try:
+        message = models.Mailing.objects.get(id=id)
+        return {"text": message.text}
+    except models.Mailing.DoesNotExist:
+        # TODO add logging
+        print('exception')
+        
+
+def create_object_to_send(id: int, tag: str) -> List[Dict]:
+    """
+    Creates a list of objects that will be sent to mailing service
+    """
+    message = get_text_message(id)
+    phones = get_phones_for_mailing(tag)
+    data = []
+    for obj in phones:
+        obj.setdefault('text', message)
+        obj.setdefault('id', id)
+        data.append(obj)
+    return data
+
 def check_time(id: int):
     """
     Gets the mailing by id and checks:
@@ -32,7 +54,3 @@ def check_time(id: int):
     current_datetime = datetime.datetime.now()
     if time_start < current_datetime < time_finish:
         print('start')
-     
-     
-
-            
