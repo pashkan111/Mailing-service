@@ -11,3 +11,29 @@ services:
       - ./volumes/postgresql/pg-data1:/var/lib/postgresql/data
     ports:
       - "5434:5432"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /bin/sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8080"
+    restart: always
+    env_file:
+     - ./.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  redis:
+    image: "redis:alpine"
+
+  celery:
+    restart: always
+    build:
+      context: .
+    command: celery -A service worker -l info
+    depends_on:
+      - db
+      - web
+      - redis
