@@ -1,6 +1,7 @@
 from . import models
 from django.db.models import Count
 from typing import List, Dict
+import datetime 
 
 
 def get_statistic() -> dict:
@@ -18,6 +19,19 @@ def get_statistic() -> dict:
 def get_phones_for_mailing(tag: str) -> List[Dict]:
     phones = models.Client.objects.filter(tag=tag).values('phone')
     return list(phones)
+
+
+def check_time(id: int):
+    """
+    Gets the mailing by id and checks:
+        if time start < current time < finish time
+    """
+    mailing = models.Mailing.objects.get(id=id)
+    time_start = mailing.date_start
+    time_finish = mailing.date_finish
+    current_datetime = datetime.datetime.now()
+    if time_start < current_datetime < time_finish:
+        print('start')
      
      
 
