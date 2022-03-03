@@ -3,6 +3,7 @@ from django.db.models import Count
 from typing import List, Dict
 import datetime
 from utils.logger import get_logger
+import pytz
 
 
 logger = get_logger(__name__)
@@ -25,10 +26,11 @@ def check_time(id: int) -> bool:
     Gets the mailing by id and checks:
         if time start < current time < finish time returns True
     """
+    from django.utils.timezone import utc
     mailing = models.Mailing.objects.get(id=id)
     time_start = mailing.date_start
     time_finish = mailing.date_finish
-    current_datetime = datetime.datetime.now()
+    current_datetime = datetime.datetime.utcnow().replace(tzinfo=utc)
     if time_start < current_datetime < time_finish:
         return True
     return False
@@ -44,10 +46,10 @@ class MailingData:
         phones = models.Client.objects.filter(tag=self.tag).values('phone')
         return list(phones)
 
-    def _get_text_message(self) -> dict:
+    def _get_text_message(self) -> str:
         try:
             message = models.Mailing.objects.get(id=self.id)
-            return {"text": message.text}
+            return message.text
         except models.Mailing.DoesNotExist as e:
             logger.error(str(e))
         
@@ -55,14 +57,15 @@ class MailingData:
         """
         Creates a list of objects that will be sent to mailing service
         """
-        message = self._get_text_message()
+        text = self._get_text_message()
         phones = self._get_phones_for_mailing()
         data = []
         for obj in phones:
-            obj.setdefault('text', message)
-            obj.setdefault('id', id)
+            obj.setdefault('text', text)
+            obj.setdefault('id', self.id)
             data.append(obj)
-        logger.info('Data collected', data)
+        logger.info('Data collected')
+        logger.info(data)
         return data
         
         

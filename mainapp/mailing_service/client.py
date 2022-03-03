@@ -1,7 +1,8 @@
-import os, requests
+import requests
 from typing import List
 from utils.logger import get_logger
 from service.settings import env
+import json
 
 
 logger = get_logger(__name__)
@@ -36,13 +37,17 @@ class ServiceClient:
         """
         for obj in self.data:
             url = self._get_url(obj)
+            json_data = json.dumps(obj)
             response = requests.post(
                 url=url,
-                data=obj,
+                data=json_data,
                 headers={'Authorization': self.token}
             )
             try:
                 response.raise_for_status()
+                result = response.json()
+                logger.info('Data has been sent')
+                logger.info(result)
                 return True
             except Exception as e:
                 logger.error(str(e))

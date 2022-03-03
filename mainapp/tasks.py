@@ -13,8 +13,12 @@ def check_mailing_time(id: int, tag: str):
     Checks the time of mailing and if is satisfies condition - 
     sends data
     """
-    is_started = check_time(id, tag)
+    is_started = check_time(id)
     if is_started:
-        data = MailingData()
-        client = ServiceClient(data)
+        data = MailingData(id, tag)
+        client = ServiceClient(data.data)
         client.send_data()
+    else:
+        logger.info(
+            f'The mailing with id = {id} does not satisfy time condition'
+            )
