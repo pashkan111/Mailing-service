@@ -1,6 +1,10 @@
 import os, requests
 from typing import List
+from utils.logger import get_logger
+from service.settings import env
 
+
+logger = get_logger(__name__)
 
 class ServiceClient:
     """
@@ -9,23 +13,21 @@ class ServiceClient:
     """
     
     def __init__(self, data: List[dict]):
-        service_url = os.environ.get('SERVICE_URL')
-        service_token = os.environ.get('SERVICE_TOKEN')
+        service_url = env('SERVICE_URL')
+        service_token = env('SERVICE_TOKEN')
         if service_url and service_token:
             self.url = service_url
             self.token = service_token
             self.data = data
         else:
-            # TODO add logging
-            raise Exception
+            logger.error('Can not import service_url or service_token')
         
     def _get_url(self, obj: dict) -> str:
         try:
             id = obj['id']
             return f'{self.url}/{id}'
         except KeyError as e:
-            # TODO add logging
-            print(str(e))
+            logger.error(str(e))
     
     def send_data(self) -> bool:
         """
@@ -43,7 +45,5 @@ class ServiceClient:
                 response.raise_for_status()
                 return True
             except Exception as e:
-                # TODO add logging
-                print(str(e))
+                logger.error(str(e))
                 return False
-        

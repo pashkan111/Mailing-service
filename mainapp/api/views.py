@@ -4,6 +4,7 @@ from . import serializers
 from .. import models
 from .mixins import SerializerMixin
 from ..services import get_statistic
+from mainapp.tasks import check_mailing_time
 
 
 class ClientViewSet(ModelViewSet):
@@ -24,6 +25,13 @@ class MailingViewSet(SerializerMixin, ModelViewSet):
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, partial=True, **kwargs)
     
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        check_mailing_time.delay(
+            id=serializer.data['id'],
+            tag=serializer.data['filter']
+        )
+
     
 class StatisticView(views.APIView):
     def get(self, request, *args, **kwargs):

@@ -1,7 +1,10 @@
 from celery import shared_task
 from .services import check_time, MailingData
 from mainapp.mailing_service.client import ServiceClient
+from utils.logger import get_logger
 
+
+logger = get_logger(__name__)
 
 @shared_task
 def check_mailing_time(id: int, tag: str):
