@@ -1,6 +1,7 @@
 from pathlib import Path
 import environ
 import os
+from celery.schedules import crontab
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,7 +34,8 @@ INSTALLED_APPS = [
     'mainapp',
     
     'rest_framework',
-    'drf_yasg'
+    'drf_yasg',
+    'django_celery_beat'
 ]
 
 MIDDLEWARE = [
@@ -125,4 +127,11 @@ CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = "Moscow/Europe"
+
+CELERY_BEAT_SCHEDULE = {
+    'find_mailings_to_run': {
+        'task': 'mainapp.tasks.find_mailings_to_run',
+        'schedule': crontab(minute="*/1"),
+    },
+}
+DJANGO_CELERY_BEAT_TZ_AWARE=False

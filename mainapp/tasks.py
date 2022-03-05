@@ -1,3 +1,4 @@
+from operator import mod
 from celery import shared_task
 from .services import check_time, MailingData
 from mainapp.mailing_service.client import ServiceClient
@@ -31,11 +32,11 @@ def check_mailing_time(id: int, tag: str):
             )
 
 
+@shared_task
 def find_mailings_to_run():
     """
     Every minute finds all mailings that should be run now
     """
-    
     all_mailings = models.Mailing.objects.filter(is_sent=False)
     for mailing in all_mailings:
         is_started = check_time(
