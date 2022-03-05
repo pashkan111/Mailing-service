@@ -21,15 +21,11 @@ def get_statistic() -> dict:
     return messages
 
 
-def check_time(id: int) -> bool:
+def check_time(time_start: datetime, time_finish: datetime) -> bool:
     """
-    Gets the mailing by id and checks:
-        if time start < current time < finish time returns True
+    Checks if time start < current time < finish time returns True
     """
     from django.utils.timezone import utc
-    mailing = models.Mailing.objects.get(id=id)
-    time_start = mailing.date_start
-    time_finish = mailing.date_finish
     current_datetime = datetime.datetime.utcnow().replace(tzinfo=utc)
     if time_start < current_datetime < time_finish:
         return True
