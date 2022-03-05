@@ -17,8 +17,8 @@ def check_mailing_time(id: int, tag: str):
     """
     mailing = models.Mailing.objects.get(id=id)
     is_started = check_time(
-        mailing.time_start,
-        mailing.time_finish
+        mailing.date_start,
+        mailing.date_finish
     )
     if is_started:
         data = MailingData(id, tag)
@@ -40,8 +40,8 @@ def find_mailings_to_run():
     all_mailings = models.Mailing.objects.filter(is_sent=False)
     for mailing in all_mailings:
         is_started = check_time(
-            mailing.time_start,
-            mailing.time_finish
+            mailing.date_start,
+            mailing.date_finish
         )
         if is_started:
             data = MailingData(mailing.id, mailing.tag)
