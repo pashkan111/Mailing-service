@@ -23,6 +23,8 @@ def check_mailing_time(id: int, tag: str):
         data = MailingData(id, tag)
         client = ServiceClient(data.data)
         client.send_data()
+        mailing.is_sent = True
+        mailing.save()
     else:
         logger.info(
             f'The mailing with id = {id} does not satisfy time condition'

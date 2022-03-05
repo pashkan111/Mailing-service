@@ -8,6 +8,7 @@ class Mailing(models.Model):
     date_finish = models.DateTimeField()
     text = models.TextField()
     filter = models.CharField(max_length=250)
+    is_sent = models.BooleanField(default=False)
     
     def __str__(self) -> str:
         return self.text
