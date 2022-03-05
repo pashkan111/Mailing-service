@@ -2,6 +2,7 @@ from celery import shared_task
 from .services import check_time, MailingData
 from mainapp.mailing_service.client import ServiceClient
 from utils.logger import get_logger
+from . import models
 
 
 logger = get_logger(__name__)
@@ -13,7 +14,11 @@ def check_mailing_time(id: int, tag: str):
     Checks the time of mailing and if is satisfies condition - 
     sends data
     """
-    is_started = check_time(id)
+    mailing = models.Mailing.objects.get(id=id)
+    is_started = check_time(
+        mailing.time_start,
+        mailing.time_finish
+    )
     if is_started:
         data = MailingData(id, tag)
         client = ServiceClient(data.data)
