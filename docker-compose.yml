@@ -37,3 +37,9 @@ services:
       - db
       - web
       - redis
+
+  celery-beat:
+    build: ./project
+    command: celery -A service beat -l info
+    depends_on:
+      - redis

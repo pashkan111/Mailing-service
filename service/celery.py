@@ -19,7 +19,7 @@ CELERY_TASK_ROUTES = {
 }
 CELERY_BEAT_SCHEDULE = {
     'preorder-task': {
-        'task': 'dostavisor.common.tasks.preorder_task',
+        'task': 'mainapp.tasks.find_mailings_to_run',
         'options': {'queue': 'periodic'},
         'schedule': crontab(minute='*/1'),
     },
