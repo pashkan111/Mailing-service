@@ -65,3 +65,30 @@ class MailingData:
         return data
         
         
+def get_clients(data: dict):
+    data_copied = data.copy()
+    # Removing clients with delivery error
+    for phone, result in data.items():
+        if result == False:
+            del data_copied[phone]
+            
+    phones = data_copied.keys()
+    clients = models.Client.objects.filter(
+        phone__in=phones
+    )
+    return clients
+
+
+def create_message_for_statistic(
+    clients: models.Client, mailing: models.Mailing
+    ):
+
+    for client in clients:
+        models.Message.objects.create(
+            status=models.Message.DELIVERED,
+            mailing=mailing,
+            client_to=client
+        )
+        
+    
+    

@@ -30,11 +30,13 @@ class ServiceClient:
         except KeyError as e:
             logger.error(str(e))
     
-    def send_data(self) -> bool:
+    def send_data(self) -> dict:
         """
         Iterates by list of data objects and send data
-        to service
+        to mailing service
+        Dict "results" contains info about clients who got the message
         """
+        results = {}
         for obj in self.data:
             url = self._get_url(obj)
             json_data = json.dumps(obj)
@@ -43,12 +45,18 @@ class ServiceClient:
                 data=json_data,
                 headers={'Authorization': self.token}
             )
+            client_phone = obj["phone"]
             try:
                 response.raise_for_status()
-                result = response.json()
-                logger.info('Data has been sent')
-                logger.info(result)
-                return True
-            except Exception as e:
-                logger.error(str(e))
-                return False
+                logger.info(
+                    f'Message for client with phone {client_phone} has been sent'
+                )
+                results.setdefault(client_phone, True)
+            except Exception:
+                logger.error(
+                    f'Error while delivering message for client with phone {client_phone}'
+                )
+                results.setdefault(client_phone, False)
+        
+        return results
+        

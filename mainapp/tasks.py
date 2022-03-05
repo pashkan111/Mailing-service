@@ -1,6 +1,8 @@
 from operator import mod
 from celery import shared_task
-from .services import check_time, MailingData
+from .services import (
+    check_time, MailingData, get_clients, create_message_for_statistic
+    )
 from mainapp.mailing_service.client import ServiceClient
 from utils.logger import get_logger
 from . import models
@@ -23,7 +25,9 @@ def check_mailing_time(id: int, tag: str):
     if is_started:
         data = MailingData(id, tag)
         client = ServiceClient(data.data)
-        client.send_data()
+        phones = client.send_data()
+        clients = get_clients(phones)
+        create_message_for_statistic(clients, mailing)
         mailing.is_sent = True
         mailing.save()
     else:
@@ -44,9 +48,10 @@ def find_mailings_to_run():
             mailing.date_finish
         )
         if is_started:
-            data = MailingData(mailing.id, mailing.tag)
+            data = MailingData(mailing.id, mailing.filter)
             client = ServiceClient(data.data)
-            client.send_data()
+            phones = client.send_data()
+            logger.info(phones)
             mailing.is_sent = True
             mailing.save()
             
