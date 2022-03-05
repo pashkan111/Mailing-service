@@ -29,3 +29,23 @@ def check_mailing_time(id: int, tag: str):
         logger.info(
             f'The mailing with id = {id} does not satisfy time condition'
             )
+
+
+def find_mailings_to_run():
+    """
+    Every minute finds all mailings that should be run now
+    """
+    
+    all_mailings = models.Mailing.objects.filter(is_sent=False)
+    for mailing in all_mailings:
+        is_started = check_time(
+            mailing.time_start,
+            mailing.time_finish
+        )
+        if is_started:
+            data = MailingData(mailing.id, mailing.tag)
+            client = ServiceClient(data.data)
+            client.send_data()
+            mailing.is_sent = True
+            mailing.save()
+            
