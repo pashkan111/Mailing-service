@@ -3,7 +3,7 @@ from django.db.models import Count
 from typing import List, Dict
 import datetime
 from utils.logger import get_logger
-import pytz
+from mainapp.mailing_service.client import ServiceClient
 
 
 logger = get_logger(__name__)
@@ -91,4 +91,22 @@ def create_message_for_statistic(
         )
         
     
-    
+def send_data(mailing: models.Mailing) -> bool:
+    """
+    Gets data and sends it to mailing service.
+    If it responses OK -> return True
+    """
+    is_started = check_time(
+        mailing.date_start,
+        mailing.date_finish
+    )
+    if is_started:
+        data = MailingData(mailing.id, mailing.filter)
+        client = ServiceClient(data.data)
+        phones = client.send_data()
+        clients = get_clients(phones)
+        create_message_for_statistic(clients, mailing)
+        mailing.is_sent = True
+        mailing.save()
+        return True
+    return False
