@@ -28,8 +28,7 @@ class MailingViewSet(SerializerMixin, ModelViewSet):
     def perform_create(self, serializer):
         super().perform_create(serializer)
         check_mailing_time.delay(
-            id=serializer.data['id'],
-            tag=serializer.data['filter']
+            id=serializer.data['id']
         )
 
     
