@@ -31,17 +31,6 @@ class TestCase1(TestCase):
             tag="clients2",
             timezone="Asia"
         )
-    
-    def test_get_clients(self):
-        clients = models.Client.objects.all()
-        response = self.client.get('/api/clients')
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.json(), serializers.ClientSerializer(
-                clients, many=True
-                ).data
-        )
         
     def test_post_client(self):
         body = {
