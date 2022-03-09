@@ -33,6 +33,19 @@ class TestCase1(TestCase):
             filter = 'clients_1',
             is_sent = True
         )
+        
+        message1 = models.Message.objects.create(
+            status=models.Message.DELIVERED,
+            mailing=mailing1
+        )
+        message2 = models.Message.objects.create(
+            status=models.Message.DELIVERED,
+            mailing=mailing1
+        )
+        message3 = models.Message.objects.create(
+            status=models.Message.IN_PROGRESS,
+            mailing=mailing1
+        )
     
     def test_get_all_mailings(self):
         response = self.client.get('/api/mailings')
@@ -83,3 +96,15 @@ class TestCase1(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(mailings_count, 2)
         
+    def test_get_statistics(self):
+        response = self.client.get('/api/message-statistic')
+        mailing_pk = models.Mailing.objects.first().pk
+        response_data = response.json()
+        statistic_data_delivered = response_data.get(str(mailing_pk))[0]
+        statistic_data_progress = response_data.get(str(mailing_pk))[1]
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(statistic_data_delivered['status'], 'delivered')
+        self.assertEqual(statistic_data_delivered['total'], 2)
+        self.assertEqual(statistic_data_progress['status'], 'progress')
+        self.assertEqual(statistic_data_progress['total'], 1)
