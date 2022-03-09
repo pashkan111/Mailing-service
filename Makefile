@@ -3,11 +3,8 @@ APP_DIR := ./
 APP_NAME := databases
 
 
-run:
-	python manage.py runserver
+run: build:
+	docker-compose up -d --build
 
-migrate:
-	python manage.py migrate
-
-makemigr:
-	python manage.py makemigrations
+test: build
+	docker-compose run --rm -- web python manage.py test
