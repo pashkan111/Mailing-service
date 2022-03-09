@@ -108,3 +108,18 @@ class TestCase1(TestCase):
         self.assertEqual(statistic_data_delivered['total'], 2)
         self.assertEqual(statistic_data_progress['status'], 'progress')
         self.assertEqual(statistic_data_progress['total'], 1)
+        
+    def test_retrieve_mailing(self):
+        mailing_pk = models.Mailing.objects.first().pk
+        response = self.client.get(f'/api/mailings/{mailing_pk}')
+        messages_list = response.json().get('mailings_messages')
+        count_messages = len(messages_list)
+        
+        messages = models.Message.objects.all()
+        
+        self.assertEqual(count_messages, 3)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            messages_list, serializers.MessageSerializer(messages, many=True).data
+            )
+        
