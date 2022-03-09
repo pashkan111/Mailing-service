@@ -4,6 +4,7 @@ from django.test import TestCase
 from mainapp import models
 from rest_framework import status
 from mainapp.api import serializers
+import json
 
 
 class TestCase1(TestCase):
@@ -55,4 +56,30 @@ class TestCase1(TestCase):
     
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(mailings_count, 4)
+        
+    def test_update_mailing(self):
+        mailing_pk = models.Mailing.objects.first().pk
+        body = {
+            "text": "updated",
+            "filter": "updated"
+        }
+        response = self.client.patch(
+            f'/api/mailings/{mailing_pk}', body, format='json'
+        )
+        mailing_updated = models.Mailing.objects.get(pk=mailing_pk)
+        
+        self.assertEqual(
+            response.json(), serializers.MailingSerializer(mailing_updated).data
+        )
+        self.assertEqual(mailing_updated.text, 'updated')
+        
+    def test_delete_mailing(self):
+        mailing_pk = models.Mailing.objects.first().pk
+        response = self.client.delete(
+            f'/api/mailings/{mailing_pk}', format='json'
+        )
+        mailings_count = models.Mailing.objects.count()
+        
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(mailings_count, 2)
         
